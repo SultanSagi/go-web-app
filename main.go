@@ -36,6 +36,7 @@ func main() {
 	r.HandleFunc("/", home)
 	r.HandleFunc("/customers/create", customersC.Create).Methods("GET")
 	r.HandleFunc("/customers/store", customersC.Store).Methods("POST")
+	r.HandleFunc("/customers/{id:[0-9]+}", customersC.Show).Methods("GET")
 	http.ListenAndServe(":3000", r)
 }
 

@@ -1,6 +1,8 @@
 package views
 
 import (
+	"bytes"
+	"io"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -26,8 +28,27 @@ type View struct {
 	Layout   string
 }
 
-func (v *View) Render(w http.ResponseWriter, data interface{}) error {
-	return v.Template.ExecuteTemplate(w, v.Layout, data)
+type Data struct {
+	Yield interface{}
+}
+
+func (v *View) Render(w http.ResponseWriter, data interface{}) {
+	w.Header().Set("Content-Type", "text/html")
+	switch data. (type) {
+		case Data:
+			//
+		default:
+			data = Data{
+				Yield: data,
+			}
+	}
+	var buf bytes.Buffer
+	err := v.Template.ExecuteTemplate(&buf, v.Layout, data)
+	if err != nil {
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		return
+	}
+	io.Copy(w, &buf)
 }
 
 func layoutFiles() []string {

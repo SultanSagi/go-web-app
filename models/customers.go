@@ -34,6 +34,10 @@ type CustomerGorm struct {
 }
 
 func (cg *CustomerGorm) ByID(id uint) *Customer {
+	// var customer Customer
+	// db := cg.DB.Where("id = ?", id)
+	// err := db.First(&customer).Error
+	// return &customer, err
 	return cg.byQuery(cg.DB.Where("id = ?", id))
 }
 
