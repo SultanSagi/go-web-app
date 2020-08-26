@@ -1,10 +1,15 @@
 {{define "yield"}}
 <div class="row">
   <div class="col-md-12">
-    
+    <h1>{{ .Yield.FirstName }}</h1>
+    <ul>
+    <li>First name: {{.Yield.FirstName}}</li>
+    <li>Last name: {{.Yield.LastName}}</li>
+    <li>Email: {{.Yield.Email}}</li>
+    <li>Gender: {{.Yield.Gender}}</li>
+    <li>Birth date: {{.Yield.BirthDate.Format "Jan 02, 2006" }}</li>
+    <li>Address: {{.Yield.Address}}</li>
+    </ul>
   </div>
-  <pre>
-    {{ .FirstName }}
-  </pre>
 </div>
 {{end}}

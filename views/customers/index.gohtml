@@ -1,0 +1,117 @@
+{{define "yield" }}
+<div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+              <form>
+                <div class="form-group">
+                  <input class="form-control" name="first_name" value="{{.SearchFirstName}}" placeholder="First name" />
+                </div>
+                <div class="form-group">
+                  <input class="form-control" name="last_name" value="{{.SearchLastName}}" placeholder="Last name" />
+                </div>
+                <div class="form-group">
+                  <button class="btn btn-primary">Search</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>
+                  {{ if eq .FilterSort "desc" }}
+                  <a href="?order_by=id&sort=asc">ID</a>
+                  {{ else }}
+                  <a href="?order_by=id&sort=desc">ID</a>
+                  {{ end }}
+                </th>
+                <th>
+                  {{ if eq .FilterSort "desc" }}
+                  <a href="?order_by=first_name&sort=asc">First name</a>
+                  {{ else }}
+                  <a href="?order_by=first_name&sort=desc">First name</a>
+                  {{ end }}
+                </th>
+                </th>
+                <th>
+                  {{ if eq .FilterSort "desc" }}
+                  <a href="?order_by=last_name&sort=asc">Last name</a>
+                  {{ else }}
+                  <a href="?order_by=last_name&sort=desc">Last name</a>
+                  {{ end }}
+                </th>
+                <th>
+                  {{ if eq .FilterSort "desc" }}
+                  <a href="?order_by=birth_date&sort=asc">Birth date</a>
+                  {{ else }}
+                  <a href="?order_by=birth_date&sort=desc">Birth date</a>
+                  {{ end }}
+                </th>
+                <th>
+                  {{ if eq .FilterSort "desc" }}
+                  <a href="?order_by=gender&sort=asc">Gender</a>
+                  {{ else }}
+                  <a href="?order_by=gender&sort=desc">Gender</a>
+                  {{ end }}
+                </th>
+                <th>
+                  {{ if eq .FilterSort "desc" }}
+                  <a href="?order_by=email&sort=asc">Email</a>
+                  {{ else }}
+                  <a href="?order_by=email&sort=desc">Email</a>
+                  {{ end }}
+                </th>
+                <th>
+                  {{ if eq .FilterSort "desc" }}
+                  <a href="?order_by=address&sort=asc">Address</a>
+                  {{ else }}
+                  <a href="?order_by=address&sort=desc">AddGress</a>
+                  {{ end }}
+                </th>
+                <th>View</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{range .Yield}}
+              <tr>
+                <th scope="row">{{.ID}}</th>
+                <td>{{.FirstName}}</td>
+                <td>{{.LastName}}</td>
+                <td>Birth data</td>
+                <td>{{.Gender}}</td>
+                <td>{{.Email}}</td>
+                <td>{{.Address}}</td>
+                <td>
+                  <a href="/customers/{{.ID}}">
+                    View
+                  </a>
+                </td>
+                <td>
+                  <a href="/customers/{{.ID}}/edit">
+                    Edit
+                  </a>
+                </td>
+              </tr>
+              {{end}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- jquery & Bootstrap JS -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+  $( function() {
+    $( "#datepicker" ).datepicker({
+      dateFormat: "yy-mm-dd",
+      maxDate: "-18y",
+      minDate: "-60y"
+    });
+  } );
+  </script>
+{{end}}

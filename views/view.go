@@ -2,6 +2,7 @@ package views
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"html/template"
 	"net/http"
@@ -30,6 +31,11 @@ type View struct {
 
 type Data struct {
 	Yield interface{}
+	Errors string
+	SearchFirstName string
+	SearchLastName string
+	FilterOrderBy string
+	FilterSort string
 }
 
 func (v *View) Render(w http.ResponseWriter, data interface{}) {
@@ -45,6 +51,7 @@ func (v *View) Render(w http.ResponseWriter, data interface{}) {
 	var buf bytes.Buffer
 	err := v.Template.ExecuteTemplate(&buf, v.Layout, data)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 		return
 	}

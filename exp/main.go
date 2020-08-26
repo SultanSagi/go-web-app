@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"time"
 )
 
 const (
@@ -17,11 +18,12 @@ const (
 
 type Customer struct {
 	gorm.Model
-	FirstName string
-	LastName string
-	Gender string
+	FirstName string `gorm:"type:varchar(100);not null"`
+	LastName string `gorm:"type:varchar(100);not null"`
+	BirthDate time.Time `gorm:"not null"`
+	Gender string `gorm:"not null"`
 	Email string `gorm:"not null"`
-	Address string
+	Address string `gorm:"type:varchar(200)"`
 }
 
 func main() {

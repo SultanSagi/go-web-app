@@ -4,18 +4,32 @@
   <head>
     <title>Document</title>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   </head>
 
   <body>
     {{template "navbar"}}
 
     <div class="container-fluid">
-      {{template "yield" .Yield }}
+      {{template "yield" . }}
+      {{if .Errors}}
+        {{ .Errors }}
+      {{end}}
     </div>
 
     <!-- jquery & Bootstrap JS -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+  $( function() {
+    $( "#datepicker" ).datepicker({
+      dateFormat: "yy-mm-dd",
+      maxDate: "-18y",
+      minDate: "-60y"
+    });
+  } );
+  </script>
   </body>
 </html>
 {{end}}
