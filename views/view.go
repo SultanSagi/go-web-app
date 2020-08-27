@@ -36,6 +36,9 @@ type Data struct {
 	SearchLastName string
 	FilterOrderBy string
 	FilterSort string
+	PaginationPrevPage string
+	PaginationNextPage string
+	PaginationPage string
 }
 
 func (v *View) Render(w http.ResponseWriter, data interface{}) {

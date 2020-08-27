@@ -21,52 +21,52 @@
               <tr>
                 <th>
                   {{ if eq .FilterSort "desc" }}
-                  <a href="?order_by=id&sort=asc">ID</a>
+                  <a href="?page={{ .PaginationPage }}order_by=id&sort=asc">ID</a>
                   {{ else }}
-                  <a href="?order_by=id&sort=desc">ID</a>
+                  <a href="?page={{ .PaginationPage }}order_by=id&sort=desc">ID</a>
                   {{ end }}
                 </th>
                 <th>
                   {{ if eq .FilterSort "desc" }}
-                  <a href="?order_by=first_name&sort=asc">First name</a>
+                  <a href="?page={{ .PaginationPage }}order_by=first_name&sort=asc">First name</a>
                   {{ else }}
-                  <a href="?order_by=first_name&sort=desc">First name</a>
+                  <a href="?page={{ .PaginationPage }}order_by=first_name&sort=desc">First name</a>
                   {{ end }}
                 </th>
                 </th>
                 <th>
                   {{ if eq .FilterSort "desc" }}
-                  <a href="?order_by=last_name&sort=asc">Last name</a>
+                  <a href="?page={{ .PaginationPage }}order_by=last_name&sort=asc">Last name</a>
                   {{ else }}
-                  <a href="?order_by=last_name&sort=desc">Last name</a>
+                  <a href="?page={{ .PaginationPage }}order_by=last_name&sort=desc">Last name</a>
                   {{ end }}
                 </th>
                 <th>
                   {{ if eq .FilterSort "desc" }}
-                  <a href="?order_by=birth_date&sort=asc">Birth date</a>
+                  <a href="?page={{ .PaginationPage }}order_by=birth_date&sort=asc">Birth date</a>
                   {{ else }}
-                  <a href="?order_by=birth_date&sort=desc">Birth date</a>
+                  <a href="?page={{ .PaginationPage }}order_by=birth_date&sort=desc">Birth date</a>
                   {{ end }}
                 </th>
                 <th>
                   {{ if eq .FilterSort "desc" }}
-                  <a href="?order_by=gender&sort=asc">Gender</a>
+                  <a href="?page={{ .PaginationPage }}order_by=gender&sort=asc">Gender</a>
                   {{ else }}
-                  <a href="?order_by=gender&sort=desc">Gender</a>
+                  <a href="?page={{ .PaginationPage }}order_by=gender&sort=desc">Gender</a>
                   {{ end }}
                 </th>
                 <th>
                   {{ if eq .FilterSort "desc" }}
-                  <a href="?order_by=email&sort=asc">Email</a>
+                  <a href="?page={{ .PaginationPage }}order_by=email&sort=asc">Email</a>
                   {{ else }}
-                  <a href="?order_by=email&sort=desc">Email</a>
+                  <a href="?page={{ .PaginationPage }}order_by=email&sort=desc">Email</a>
                   {{ end }}
                 </th>
                 <th>
                   {{ if eq .FilterSort "desc" }}
-                  <a href="?order_by=address&sort=asc">Address</a>
+                  <a href="?page={{ .PaginationPage }}order_by=address&sort=asc">Address</a>
                   {{ else }}
-                  <a href="?order_by=address&sort=desc">AddGress</a>
+                  <a href="?page={{ .PaginationPage }}order_by=address&sort=desc">AddGress</a>
                   {{ end }}
                 </th>
                 <th>View</th>
@@ -79,7 +79,7 @@
                 <th scope="row">{{.ID}}</th>
                 <td>{{.FirstName}}</td>
                 <td>{{.LastName}}</td>
-                <td>Birth data</td>
+                <td>{{ .BirthDate.Format "Jan 02, 2006" }}</td>
                 <td>{{.Gender}}</td>
                 <td>{{.Email}}</td>
                 <td>{{.Address}}</td>
@@ -97,6 +97,16 @@
               {{end}}
             </tbody>
           </table>
+          <nav aria-label="...">
+            <ul class="pager">
+              {{ if ne .PaginationPrevPage "" }}
+              <li><a href="?page={{.PaginationPrevPage}}&order_by={{.FilterOrderBy}}&sort={{.FilterSort}}">Previous</a></li>
+              {{ end }}
+              {{ if ne .PaginationNextPage "" }}
+              <li><a href="?page={{.PaginationNextPage}}&order_by={{.FilterOrderBy}}&sort={{.FilterSort}}">Next</a></li>
+              {{end}}
+            </ul>
+          </nav>
         </div>
       </div>
     </div>

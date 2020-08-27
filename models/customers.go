@@ -25,8 +25,9 @@ type CustomerService interface {
 
 type CustomerDB interface {
 	ByID(id uint) (*Customer, error)
-	Fetch(FilterOrderBy string, FilterSort string) ([]Customer, error)
-	Search(firstName string, lastName string, FilterOrderBy string, FilterSort string) ([]Customer, error)
+	Fetch(FilterOrderBy string, FilterSort string, limit int, offset int) ([]Customer, error)
+	Search(firstName string, lastName string, FilterOrderBy string, FilterSort string, limit int, offset int) ([]Customer, error)
+	Total() (int)
 	Create(customer *Customer) error
 	Update(customer *Customer) error
 	Delete(id uint) error
@@ -122,13 +123,12 @@ func (cv *customerValidator) BirthDateRequired(c *Customer) error {
 }
 
 func (cv *customerValidator) DateRange(c *Customer) error {
-	// today, _ := time.Parse("2006-01-02", "2001-11-30")
 	from := time.Now().Add(-60*365*24*time.Hour)
 	to := time.Now().Add(-18*365*24*time.Hour)
-	if !(c.BirthDate.After(from) && c.BirthDate.Before(to)) {
-		return fmt.Errorf("BirthDate range is 18 til 60 years")
+	if c.BirthDate.After(from) && c.BirthDate.Before(to) {
+		return nil
 	}
-	return nil
+	return fmt.Errorf("BirthDate range is 18 til 60 years")
 }
 
 var _ CustomerDB = &CustomerGorm{}
@@ -145,22 +145,28 @@ func NewCustomerGorm(connectionInfo string) (*CustomerGorm, error) {
 	return &CustomerGorm{db}, nil
 }
 
-func (cg *CustomerGorm) Search(firstName string, lastName string, FilterOrderBy string, FilterSort string) ([]Customer, error) {
+func (cg *CustomerGorm) Search(firstName string, lastName string, FilterOrderBy string, FilterSort string, limit int, offset int) ([]Customer, error) {
 	var customers []Customer
-	err := cg.db.Where("first_name LIKE ? AND last_name LIKE ?", "%"+firstName+"%", "%"+lastName+"%").Order(FilterOrderBy+" "+FilterSort).Find(&customers).Error
+	err := cg.db.Where("first_name LIKE ? AND last_name LIKE ?", "%"+firstName+"%", "%"+lastName+"%").Order(FilterOrderBy+" "+FilterSort).Offset(offset).Limit(limit).Find(&customers).Error
 	if err != nil {
 		return nil, err
 	}
 	return customers, nil
 }
 
-func (cg *CustomerGorm) Fetch(FilterOrderBy string, FilterSort string) ([]Customer, error) {
+func (cg *CustomerGorm) Fetch(FilterOrderBy string, FilterSort string, limit int, offset int) ([]Customer, error) {
 	var customers []Customer
-	err := cg.db.Order(FilterOrderBy+" "+FilterSort).Find(&customers).Error
+	err := cg.db.Order(FilterOrderBy+" "+FilterSort).Offset(offset).Limit(limit).Find(&customers).Error
 	if err != nil {
 		return nil, err
 	}
 	return customers, nil
+}
+
+func (cg *CustomerGorm) Total() (int) {
+	var count int
+	cg.db.Table("customers").Count(&count)
+	return count
 }
 
 func (cg *CustomerGorm) ByID(id uint) (*Customer, error) {

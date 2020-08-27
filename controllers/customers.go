@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -40,14 +41,12 @@ type SearchForm struct {
 
 // GET /customers/create
 func (c *Customers) Index(w http.ResponseWriter, r *http.Request) {
-	// form := SearchForm{}
-	// if err := parseForm(r, &form); err != nil {
-	// 	panic(err)
-	// }
 	var customers []models.Customer
 	var err error
+	// search
 	FirstName := r.URL.Query().Get("first_name")
 	LastName := r.URL.Query().Get("last_name")
+	// sort
 	FilterOrderBy := "id"
 	FilterSort := "desc"
 	var columnList = models.DataList{"id", "first_name", "last_name", "birth_date", "gender", "email", "address"}
@@ -58,21 +57,44 @@ func (c *Customers) Index(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("sort") != "" && sortList.Has(r.URL.Query().Get("sort")) {
 		FilterSort = r.URL.Query().Get("sort")
 	}
+	// pagination
+	page := "1"
+	if r.URL.Query().Get("page") != "" {
+		page = r.URL.Query().Get("page")
+	}
+	prevPage := ""
+	nextPage := ""
+	perPage := 2
+	pageInt, _ := strconv.Atoi(page)
+	totalCount := c.CustomerService.Total()
+	if pageInt > 1 {
+		prevPage = strconv.Itoa(pageInt - 1)
+	}
+	res := float64(totalCount)/float64(perPage)
+	totalPages := int(math.Ceil(res))
+	if pageInt < totalPages {
+		nextPage = strconv.Itoa(pageInt + 1)
+	}
+	offset := perPage*(pageInt-1)
+	fmt.Println(nextPage)
+	// query
 	if FirstName != "" && LastName != "" {
-		customers, err = c.CustomerService.Search(FirstName, LastName, FilterOrderBy, FilterSort)
+		customers, err = c.CustomerService.Search(FirstName, LastName, FilterOrderBy, FilterSort, perPage, offset)
 	} else {
-		customers, err = c.CustomerService.Fetch(FilterOrderBy, FilterSort)
+		customers, err = c.CustomerService.Fetch(FilterOrderBy, FilterSort, perPage, offset)
 	}
 	if err != nil {
 		log.Println(err)
 	}
-	// fmt.Println(customers)
 	var vd views.Data
 	vd.Yield = customers
 	vd.SearchFirstName = FirstName
 	vd.SearchLastName = LastName
 	vd.FilterOrderBy = FilterOrderBy
 	vd.FilterSort = FilterSort
+	vd.PaginationPrevPage = prevPage
+	vd.PaginationNextPage = nextPage
+	vd.PaginationPage = page
 	c.IndexView.Render(w, vd)
 }
 
@@ -163,21 +185,21 @@ func (c *Customers) Update(w http.ResponseWriter, r *http.Request) {
 	vd.Yield = customer
 	var form CustomerForm
 	if err := parseForm(r, &form); err != nil {
-		fmt.Println("130")
 		fmt.Println(err)
 		var vd1 views.Data
 		vd1.Yield = err
 		c.EditView.Render(w, vd1)
 		return
 	}
+	timeResult, _ := time.Parse("2006-01-02", form.BirthDate)
 	customer.FirstName = form.FirstName
 	customer.LastName = form.LastName
 	customer.Email = form.Email
 	customer.Gender = form.Gender
 	customer.Address = form.Address
+	customer.BirthDate = timeResult
 	err = c.CustomerService.Update(customer)
 	if err != nil {
-		fmt.Println("144")
 		fmt.Println(err)
 		var vd2 views.Data
 		vd2.Errors = fmt.Sprintf("%s", err)
@@ -185,5 +207,6 @@ func (c *Customers) Update(w http.ResponseWriter, r *http.Request) {
 		c.EditView.Render(w, vd2)
 		return
 	}
+	fmt.Println("step 3")
 	c.EditView.Render(w, vd)
 }
