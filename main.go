@@ -14,8 +14,8 @@ import (
 const (
 	host = "localhost"
 	port = 5432
-	user = "sultan"
-	password = "narivo979"
+	user = "root"
+	password = ""
 	dbname = "gowebapp_dev"
 )
 
@@ -24,10 +24,6 @@ var homeView *views.View
 func main() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 	host, port, user, password, dbname)
-	// cg, err := models.NewCustomerGorm(psqlInfo)
-	// if err != nil {
-	// 	panic(err)
-	// }
 	services, err := models.NewServices(
 		models.WithGorm("postgres", psqlInfo),
 		models.WithCustomer(),
@@ -36,6 +32,7 @@ func main() {
 		panic(err)
 	}
 	defer services.Close()
+	services.AutoMigrate()
 
 	r := mux.NewRouter()
 	homeView = views.NewView("bootstrap", "views/home.gohtml")

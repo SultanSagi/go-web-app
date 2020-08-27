@@ -43,3 +43,15 @@ type Services struct {
 func (s *Services) Close() error {
 	return s.db.Close()
 }
+
+func (s *Services) DestructiveReset() error {
+	err := s.db.DropTableIfExists(&Customer{}).Error
+	if err != nil {
+		return err
+	}
+	return s.AutoMigrate()
+}
+
+func (s *Services) AutoMigrate() error {
+	return s.db.AutoMigrate(&Customer{}).Error
+}
